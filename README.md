@@ -10,3 +10,7 @@ Well, I created this app to put in practise some knowledge related with **Angula
 
 ## What I learn in this project :question:
 When I built this web app, I learn how to implement sockets with Angular and how to communicate these with a server in NodeJs. Another fact that I learn was how to build a very nice **database architecture** in order to save data correctly and very well organized.
+
+## Project source code :star:
+In this link you can download and look the source code of the project
+https://github.com/danara88/ChatApp-Code
