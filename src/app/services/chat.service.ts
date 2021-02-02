@@ -70,6 +70,24 @@ export class ChatService {
     return this.getQuery('chat/members/' + chatId, token)
       .pipe(map(resp => resp));
   }
+
+  // Borrar un chat completo
+  deleteChat(token: string, chatId: string): Observable<Chat> {
+    const headers = new HttpHeaders().set('Content-Type', 'application/json')
+                  .set('Authorization', token);
+    return this._http.delete<Chat>(`${ this.url }/api/chat/${ chatId }`, {headers});
+  }
+
+  // Actualizar un chat
+  updateChat(token: string, chatId: string, chat: Chat): Observable<Chat> {
+    const params = JSON.stringify(chat);
+    const headers = new HttpHeaders().set('Content-Type', 'application/json')
+                    .set('Authorization', token);
+    return this._http.put<Chat>(`${ this.url }/api/chat/${ chatId }`, params, {headers})
+              .pipe(
+                  map((resp: any) => resp.chat)
+                );
+  }
   
 
 
