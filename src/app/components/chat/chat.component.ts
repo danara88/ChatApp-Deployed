@@ -52,7 +52,7 @@ export class ChatComponent implements OnInit, OnChanges  {
     this.loaderMessages = false;
     this.messages = [];
     this.identity = this._userService.getIdentity();
-    this.socket = io('http://localhost:3000/');
+    this.socket = io('https://app-chat-daniel.herokuapp.com/');
     this.url = global.url;
     this.deletedChat = false;
     
