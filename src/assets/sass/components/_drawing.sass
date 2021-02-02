@@ -1,7 +1,10 @@
-.drawing
+.drawing-main-features
     display: flex
     flex-direction: column
     align-items: center
+    
+.drawing
+    @extend .drawing-main-features
     margin: 20rem auto
 .drawing__text
     color: $principalC
@@ -11,3 +14,14 @@
     font-size: 5rem
 .drawing__img
     width: 11rem
+
+// dibujo tamaño pequeño 
+.drawing--small
+    @extend .drawing-main-features
+    margin: 3rem auto
+.drawing--small > .drawing__img
+    width: 5rem
+.drawing--small > .drawing__text--nochats
+    font-size: 1.5rem
+
+
