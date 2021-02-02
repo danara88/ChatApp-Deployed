@@ -62,7 +62,20 @@ p {
   align-items: center;
   justify-content: center;
   padding-bottom: 1rem;
-  border-bottom: 0.2rem solid rgba(0, 0, 0, 0.1); }
+  border-bottom: 0.2rem solid rgba(0, 0, 0, 0.1);
+  position: relative; }
+
+.section__head-buttons {
+  display: flex;
+  width: 10%;
+  position: absolute;
+  right: 0; }
+
+.section__head-buttons-item {
+  margin: 0 1rem;
+  cursor: pointer; }
+  .section__head-buttons-item:hover {
+    color: #ececec; }
 
 .section__head--pointer {
   cursor: pointer; }
@@ -262,6 +275,15 @@ p {
   padding: 2rem;
   border-radius: 0.7rem; }
 
+.modaldefault--samll {
+  width: 30%; }
+
+.modaldefault__body-text {
+  margin: 2rem 0; }
+
+.modaldefault__body-options {
+  display: flex; }
+
 .formd {
   padding: 2rem;
   border-radius: 0.7rem;
@@ -322,6 +344,12 @@ p {
     background: rgba(247, 58, 58, 0.8);
     outline: none; }
 
+.formd__btn--gray {
+  background: #242629; }
+  .formd__btn--gray:hover {
+    background: #242629;
+    outline: none; }
+
 .formd__btn--outline {
   padding: 1rem 2rem;
   text-align: center;
@@ -363,10 +391,12 @@ p {
     background: rgba(247, 58, 58, 0.8);
     cursor: default; }
 
-.drawing {
+.drawing-main-features, .drawing, .drawing--small {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; }
+
+.drawing {
   margin: 20rem auto; }
 
 .drawing__text {
@@ -379,5 +409,19 @@ p {
 
 .drawing__img {
   width: 11rem; }
+
+.drawing--small {
+  margin: 3rem auto; }
+
+.drawing--small > .drawing__img {
+  width: 5rem; }
+
+.drawing--small > .drawing__text--nochats {
+  font-size: 1.5rem; }
+
+.members-container {
+  height: 20rem;
+  overflow-y: scroll;
+  padding: 0 1rem; }
 
 /*# sourceMappingURL=styles.css.map */
