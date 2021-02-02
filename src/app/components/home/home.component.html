@@ -17,7 +17,7 @@
                 </div>
                 
 
-                <div class="chats" *ngIf="chats">
+                <div class="chats" *ngIf="chats && chats.length > 0">
 
                     <div class="chat" *ngFor="let chat of chats" (click)="selectChat(chat._id)">
                         <img src="assets/img/group.svg" alt="logo de la app" class="chat__img">
@@ -38,7 +38,7 @@
 
     <!-- CHAT DE MENSAJES -->
     <div class="col-md-9 allheight">
-        <app-chat [chat]="chat" [user]="user" [members]="members"></app-chat>
+        <app-chat [chat]="chat" [user]="user" [members]="members" (removeChatItem)="deletedChat($event)"></app-chat>
     </div>
     <!-- CHAT DE MENSAJES -->
 

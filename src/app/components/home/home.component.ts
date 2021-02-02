@@ -8,6 +8,7 @@ import { User } from 'src/app/models/user.model';
 import { Member } from '../../models/member.model';
 
 
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -37,7 +38,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.getMyChats();
-  }
+  } 
 
   // obtener todos mis chats
   getMyChats() { 
@@ -46,6 +47,7 @@ export class HomeComponent implements OnInit {
       if(resp.chats) {
         this.status ='success';
         this.chats = resp.chats;
+       
       }
       this.loader = false;
     }, error => {
@@ -83,6 +85,17 @@ export class HomeComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  // Obtener el resultado emitido por el componente del chat
+  deletedChat( event ) {
+  
+    // Buscar en el arreglo de chats el indice del chat que llega por parámetro
+    let chatIndex = this.chats.findIndex(chat => chat._id === event.chat._id);
+   
+    // Eliminar del arreglo el objeto eliminado
+    this.chats.splice(chatIndex, 1);
+
   }
 
 }

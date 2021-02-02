@@ -5,13 +5,23 @@
         <div class="section__head">
             <img src="assets/img/group.svg" alt="" class="section__head-img">
             <span class="section__head-text ml-3">{{ chat.title }}</span>
+
+            <div class="section__head-buttons" *ngIf="chat.user._id && chat.user._id == identity._id && deletedChat === false">
+                <i  onclick="document.getElementById('id05').style.display='block'"  class="fas fa-trash section__head-buttons-item" title="Eliminar chat"></i>
+                <i  onclick="document.getElementById('id06').style.display='block'"  class="fas fa-edit section__head-buttons-item" title="Editar chat"></i>
+            </div>
+
         </div>
 
         <div class="messages__container">
 
+            <div class="drawing" *ngIf="deletedChat === true">
+                <!-- <img src="assets/img/tap2.svg" class="section__head-img drawing__img"> -->
+                <span class="drawing__text--nochats">The chat has been removed</span>
+            </div>
             
             <!-- mensaje de bienvenida -->
-            <div class="messages__list " *ngIf="messages && messages.length == 0 && !loaderMessages">
+            <div class="messages__list " *ngIf="messages && messages.length == 0 && !loaderMessages && deletedChat === false">
                 <div class="message message--welcome">
                     <img src="assets/img/man.svg" alt="" class="chat__img">
                     <span class="message__text-welcome text-muted" *ngIf="user">{{ user.username }} a creado el chat. </span>
@@ -32,7 +42,7 @@
 
 
             <!-- contenedor de todos los mensajes -->
-            <div class="messages__list " id="messagesList" *ngIf="messages && messages.length && !loaderMessages">
+            <div class="messages__list " id="messagesList" *ngIf="messages && messages.length && !loaderMessages && deletedChat === false">
 
                 <div class="message" *ngFor="let message of messages">
                     <img src="assets/img/man.svg" alt="" class="chat__img" *ngIf="!message.user.image">
@@ -50,7 +60,7 @@
             <!-- contenedor de todos los mensajes -->
 
             <!-- campo para mandar el mensaje -->
-            <div class="formdefault formdefault--messages formdefault-100">
+            <div class="formdefault formdefault--messages formdefault-100" *ngIf="deletedChat === false">
                 <div class="formdefault__group m-4">
                     <input type="text" class="formdefault__input" placeholder="Escribe tu mensaje" [(ngModel)]="textMessage" (keyup.enter)="sendMessage()">
                     <button class="btn btn-primary formdefault--messages-btn ml-3" (click)="sendMessage()"><i class="fas fa-paper-plane"></i></button>
@@ -79,7 +89,6 @@
             <div class="groupinfo__title mt-5">{{ 'members' | uppercase }}</div>
             <div class="members" *ngIf="members">
                 <div class="member" *ngFor="let member of members">
-
                     <img *ngIf="!member.user.image" src="assets/img/man.svg" class="chat__img">
 
                     <img *ngIf="member.user.image" [src]="url + '/api/user/image/' + member.user.image" class="chat__img">
@@ -90,15 +99,113 @@
              <!-- Listado de los miembros del chat -->
 
 
+
         </div>
 
        
     </div>
      <!-- Informacion del chat -->
 
+
+     <!-- Modal de confirmación de eliminar un chat -->
+     <div id="id05" class="w3-modal">
+        <div class="w3-modal-content modaldefault modaldefault--samll animated fadeIn">
+          <div class="w3-container">
+    
+            <div class="modaldefault__head">
+                <h4 class="modaldefault__title">
+                    Delete chat "{{ chat.title }}"
+                </h4>
+                <span onclick="document.getElementById('id05').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+            </div>
+    
+            <div class="modaldefault__body">
+                <p class="modaldefault__body-text">Are you sure to delete this chat ? You will not be able to recover the conversation.</p>
+                <div class="modaldefault__body-options">
+                    <button  class="formd__btn" (click)="deleteChat( chat._id )">Remove chat</button>
+                    <button  class="formd__btn formd__btn--gray ml-2" onclick="document.getElementById('id05').style.display='none'">Cancel</button>
+                </div>
+            </div>
+    
+          </div>
+        </div>
+      </div>
+    <!-- Modal de confirmación de eliminar un chat -->
+
+
+    <!-- Modal de confirmación de eliminar un chat -->
+     <div id="id06" class="w3-modal">
+        <div class="w3-modal-content modaldefault modaldefault--samll animated fadeIn">
+          <div class="w3-container">
+    
+            <div class="modaldefault__head">
+                <h4 class="modaldefault__title">
+                    Edit chat "{{ chat.title }}"
+                </h4>
+                <span onclick="document.getElementById('id06').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+            </div>
+    
+            <div class="modaldefault__body">
+                    <!-- Alerta -->
+                <app-alert  [status]="status" [alertMessage]="alertMessage"></app-alert>
+                <!-- Alerta -->
+               <form 
+                #editChatF = "ngForm"
+                (ngSubmit)="editChat()"
+                class="formd formd--gray formd--notmargin">
+                   
+                    <!-- Nombre del chat -->
+                    <label>Chat title</label>
+                    <div class="formd__group">
+                        <input  type="text" 
+                                class="formd__input" 
+                                placeholder="Chat title"
+                                name = "title"
+                                #title = "ngModel"
+                                [(ngModel)]="editChatModel.title"
+                                required>
+                    </div>
+
+                    <!-- Descripsión del chat -->
+                    <label>Chat description</label>
+                    <div class="formd__group">
+                        <textarea  
+                            class="formd__input formd__textarea" 
+                            placeholder="What is your chat about?"
+                            name="description"
+                            #description="ngModel"
+                            [(ngModel)]="editChatModel.description"
+                            required
+                        ></textarea>
+                    </div>
+
+                     
+
+             
+                    <div class="modaldefault__body-options">
+                        <button  class="formd__btn" type="submit" [disabled]="editChatF.form.invalid">Save changes</button>
+                        <button  class="formd__btn formd__btn--gray ml-2" onclick="document.getElementById('id06').style.display='none'">Cancel</button>
+                    </div>
+                </form>
+            </div>
+    
+          </div>
+        </div>
+      </div>
+    <!-- Modal de confirmación de eliminar un chat -->
+
 </div>
+
 
 <div class="drawing" *ngIf="!chat">
     <img src="assets/img/tap2.svg" class="section__head-img drawing__img">
     <span class="drawing__text--nochats">Select a chat</span>
 </div>
+
+
+
+
+
+
+
+

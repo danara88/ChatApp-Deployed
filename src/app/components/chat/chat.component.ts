@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 declare var $: any;
 import * as io from 'socket.io-client';
 
@@ -10,7 +10,10 @@ import { User } from 'src/app/models/user.model';
 import { UserService } from 'src/app/services/user.service';
 import { MessageService } from '../../services/message.service';
 import { global } from '../../services/global'; 
+import { ChatService } from '../../services/chat.service';
+import { Router } from '@angular/router';
 
+import Swal from 'sweetalert2'
 
 @Component({
   selector: 'app-chat',
@@ -19,9 +22,10 @@ import { global } from '../../services/global';
 })
 export class ChatComponent implements OnInit, OnChanges  {
 
-  @Input() public chat: Chat;
-  @Input() public members: Member[];
-  @Input() public user: User;
+  @Input()  public chat: Chat;
+  @Input()  public members: Member[];
+  @Input()  public user: User;
+  @Output() public removeChatItem = new EventEmitter();
 
   public token: string;
   public identity: User;
@@ -32,29 +36,47 @@ export class ChatComponent implements OnInit, OnChanges  {
   public status: string;
   public textMessage: string;
   public url: string;
+  public deletedChat: boolean;
+  public editChatModel: Chat;
 
   // socket
   public socket: any;
 
   constructor( 
     private _userService: UserService, 
-    private _messageService: MessageService
+    private _messageService: MessageService,
+    private _chatService: ChatService,
+    private _router: Router
   ) {
     this.token = this._userService.getToken();
     this.loaderMessages = false;
     this.messages = [];
     this.identity = this._userService.getIdentity();
-    this.socket = io('https://app-chat-daniel.herokuapp.com/');
+    this.socket = io('http://localhost:3000/');
     this.url = global.url;
+    this.deletedChat = false;
+    
    }
 
   ngOnInit() {
    this.socketPush();
+   this.editChatModel = new Chat(null, '', '', '', null, '');
   }
 
   ngOnChanges() {
     /* OBTENER TODOS LOS MENSAJES DEL CHAT */
     this.getMessages();
+
+    /* ACTUALIZAR VARIABLE DE BORRADO */
+    this.deletedChat = false;
+
+    /* RELLENAR PROPIEDADES PARA EDITAR EL CHAT */
+    if(this.chat) {
+      this.editChatModel.description = this.chat.description;
+      this.editChatModel.title = this.chat.title;
+    }
+    
+
   }
 
   // Onbtener todos los mensajes de un chat
@@ -66,10 +88,8 @@ export class ChatComponent implements OnInit, OnChanges  {
             this.messages = resp.messages;
             this.status = 'success';
 
-         
             this.loaderMessages = false;
            
-
             /* bajar el scroll */
             this.scrollDown(400);
           }
@@ -113,7 +133,7 @@ export class ChatComponent implements OnInit, OnChanges  {
       if(resp.message && resp.user) {
 
         //this.getMessages();
-        console.log(this.messages);
+       
         /* enviar la información al servidor por medio del socket */
         this.socket.emit('saveMessage', resp);
 
@@ -127,6 +147,45 @@ export class ChatComponent implements OnInit, OnChanges  {
       this.alertMessage = error.error.message;
     } );
 
+  }
+
+
+  // Eliminar el chat
+  deleteChat( chatId) {
+
+    this._chatService.deleteChat(this.token, chatId).subscribe(chat => {
+
+        this.deletedChat = true;
+        // Emitir el chat que fue eliminado
+        this.removeChatItem.emit(chat);
+        // Quitar el modal
+        document.getElementById('id05').style.display='none';
+        
+    });
+  }
+
+  // Editar el chat
+  editChat() {
+
+    // Completar el objeto con las propiedades faltantes
+    this.chat.description = this.editChatModel.description;
+    this.chat.title = this.editChatModel.title;
+
+    this._chatService.updateChat(this.token, this.chat._id, this.chat).subscribe(chat => {
+       this.status = 'success';
+       this.alertMessage = 'Chat updated !';
+
+       setTimeout(() => {
+        this.status = null;
+        this.alertMessage = null;
+       }, 2000)
+       
+       this.chat = chat;
+       
+    }, error => {
+      this.status = 'error';
+      this.alertMessage = error.error.message;
+    });
   }
 
 
